@@ -70,4 +70,7 @@ class MastodonPlatform(BasePlatform):
     async def post_mock(self, message: str, cta_url: str) -> PlatformResult:
         instance = settings.MASTODON_INSTANCE_URL.rstrip("/") or "https://mastodon.social"
         mock_id = uuid.uuid4().hex[:10]
-        return self.success_result(posted_url=f"{instance}/@demouser/mock-{mock_id}")
+        return self.success_result(
+            posted_url=f"{instance}/@demouser/mock-{mock_id}",
+            is_mock=True,
+        )

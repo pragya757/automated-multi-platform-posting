@@ -52,7 +52,7 @@ class BasePlatform(ABC):
         now = datetime.now()
         return now.strftime("%Y-%m-%d"), now.strftime("%H:%M:%S")
 
-    def success_result(self, posted_url: str) -> PlatformResult:
+    def success_result(self, posted_url: str, is_mock: bool = False) -> PlatformResult:
         d, t = self._now()
         return PlatformResult(
             platform=self.name,
@@ -62,6 +62,7 @@ class BasePlatform(ABC):
             date=d,
             time=t,
             error=None,
+            is_mock=is_mock,
         )
 
     def failure_result(self, error_message: str) -> PlatformResult:
@@ -69,8 +70,9 @@ class BasePlatform(ABC):
             platform=self.name,
             status="failed",
             posted_url=None,
-            public_access=self.is_public,
+            public_access=False,
             date=None,
             time=None,
             error=error_message,
+            is_mock=False,
         )

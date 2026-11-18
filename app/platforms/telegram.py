@@ -80,4 +80,7 @@ class TelegramPlatform(BasePlatform):
     async def post_mock(self, message: str, cta_url: str) -> PlatformResult:
         channel = settings.TELEGRAM_CHAT_ID.lstrip("@") if settings.TELEGRAM_CHAT_ID else "demochannel"
         mock_msg_id = 1000 + (uuid.uuid4().int % 9000)
-        return self.success_result(posted_url=f"https://t.me/{channel}/mock-{mock_msg_id}")
+        return self.success_result(
+            posted_url=f"https://t.me/{channel}/mock-{mock_msg_id}",
+            is_mock=True,
+        )

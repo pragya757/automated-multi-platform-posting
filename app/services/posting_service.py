@@ -56,8 +56,10 @@ class PostingService:
         # Check if at least one platform succeeded
         has_success = any(r.status == "success" for r in results)
 
+        is_mock_run = bool(force_mock or settings.MOCK_MODE)
         return PostingResponse(
             success=has_success,
+            mock_mode=is_mock_run,
             results=list(results),
         )
 

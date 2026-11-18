@@ -130,10 +130,12 @@ async def test_api_posting_mock_success_all_platforms():
         data = resp.json()
 
         assert data["success"] is True
+        assert data["mock_mode"] is True
         assert len(data["results"]) == 5
 
         for item in data["results"]:
             assert item["status"] == "success"
+            assert item["is_mock"] is True
             assert item["posted_url"] is not None
             assert item["date"] is not None
             assert item["time"] is not None
@@ -158,6 +160,10 @@ async def test_api_posting_without_credentials_fails_gracefully():
             # each unconfigured platform reports failure gracefully
             if item["status"] == "failed":
                 assert item["posted_url"] is None
+                assert item["public_access"] is False
+                assert item["date"] is None
+                assert item["time"] is None
+                assert item["is_mock"] is False
                 assert item["error"] is not None
                 assert "credentials" in item["error"].lower()
 
@@ -227,3 +233,53 @@ async def test_independent_error_handling_isolation():
     assert failure_item.status == "failed"
     assert failure_item.posted_url is None
     assert "Connection abruptly terminated" in failure_item.error
+
+
+# ------------------------------------------------------------------------------
+# 4. Detailed Validation API Rejection Tests
+# ------------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_api_posting_exactly_200_chars_accepted():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        # Message with exactly 200 characters
+        exact_200_msg = "X" * 180 + " https://example.com"
+        assert len(exact_200_msg) == 200
+
+        resp = await client.post("/posting?mock=true", json={"message": exact_200_msg})
+        assert resp.status_code == 200
+        assert resp.json()["success"] is True
+
+
+@pytest.mark.asyncio
+async def test_api_posting_exceeding_200_chars_rejected():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        too_long = "X" * 181 + " https://example.com"
+        assert len(too_long) == 201
+
+        resp = await client.post("/posting?mock=true", json={"message": too_long})
+        assert resp.status_code == 422
+        assert "must not exceed 200 characters" in resp.text
+
+
+@pytest.mark.asyncio
+async def test_api_posting_multiple_urls_rejected():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        multi = "Check https://site1.com and https://site2.com for details."
+        resp = await client.post("/posting?mock=true", json={"message": multi})
+        assert resp.status_code == 422
+        assert "exactly one Call-To-Action" in resp.text
+
+
+@pytest.mark.asyncio
+async def test_api_posting_malformed_url_rejected():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        bad_url = "Visit https://invalid-host-without-dot for news."
+        resp = await client.post("/posting?mock=true", json={"message": bad_url})
+        assert resp.status_code == 422
+        assert "invalid domain name" in resp.text
+

@@ -187,55 +187,82 @@ Publishes a validated text message with one CTA URL across all platforms.
 }
 ```
 
-#### Sample Successful Response (200 OK)
+#### Sample Successful Response (200 OK - Mock Simulation Mode)
 ```json
 {
   "success": true,
+  "mock_mode": true,
   "results": [
     {
       "platform": "Bluesky",
       "status": "success",
-      "posted_url": "https://bsky.app/profile/demo-user.bsky.social/post/3lbexample",
+      "posted_url": "https://bsky.app/profile/demo-user.bsky.social/post/mock-2d7fdcb1826c",
       "public_access": true,
       "date": "2026-11-18",
-      "time": "14:55:00",
-      "error": null
+      "time": "15:00:07",
+      "error": null,
+      "is_mock": true
     },
     {
       "platform": "Mastodon",
       "status": "success",
-      "posted_url": "https://mastodon.social/@demouser/113506123456789012",
+      "posted_url": "https://mastodon.social/@demouser/mock-5fdb6ca388",
       "public_access": true,
       "date": "2026-11-18",
-      "time": "14:55:00",
-      "error": null
+      "time": "15:00:07",
+      "error": null,
+      "is_mock": true
     },
     {
       "platform": "Telegram",
       "status": "success",
-      "posted_url": "https://t.me/demochannel/482",
+      "posted_url": "https://t.me/demochannel/mock-9743",
       "public_access": true,
       "date": "2026-11-18",
-      "time": "14:55:00",
-      "error": null
+      "time": "15:00:07",
+      "error": null,
+      "is_mock": true
     },
     {
       "platform": "Discord",
       "status": "success",
-      "posted_url": "https://discord.com/channels/123456789/987654321/1307612345678901234",
+      "posted_url": "https://discord.com/channels/123456789/987654321/mock-384568053534899355",
       "public_access": false,
       "date": "2026-11-18",
-      "time": "14:55:00",
-      "error": null
+      "time": "15:00:07",
+      "error": null,
+      "is_mock": true
     },
     {
       "platform": "Reddit",
       "status": "success",
-      "posted_url": "https://www.reddit.com/r/test/comments/1gxexample/",
+      "posted_url": "https://www.reddit.com/r/test/comments/mock-8255bd9/",
       "public_access": true,
       "date": "2026-11-18",
-      "time": "14:55:00",
-      "error": null
+      "time": "15:00:07",
+      "error": null,
+      "is_mock": true
+    }
+  ]
+}
+```
+
+#### Sample Response Without Credentials (200 OK - Safe Failure Reporting)
+When live posting is requested (`mock=false`) without `.env` credentials configured:
+```json
+{
+  "success": false,
+  "mock_mode": false,
+  "results": [
+    {
+      "platform": "Bluesky",
+      "status": "failed",
+      "posted_url": null,
+      "public_access": false,
+      "date": null,
+      "time": null,
+      "error": "Platform credentials not configured in environment variables. Configure .env or set MOCK_MODE=true for testing.",
+      "is_mock": false
     }
   ]
 }
@@ -263,7 +290,7 @@ When input exceeds 200 characters:
     {
       "type": "value_error",
       "loc": ["body", "message"],
-      "msg": "Value error, Message must not exceed 200 characters. Current length: 245 characters.",
+      "msg": "Value error, Message must not exceed 200 characters. Current length: 201 characters.",
       "input": "..."
     }
   ]
@@ -288,16 +315,28 @@ rootdir: /Users/pragya/Downloads/practical-test-main-pragya
 configfile: pytest.ini
 plugins: anyio-4.16.0, asyncio-1.5.0
 asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
-collecting ... collected 13 items
+collecting ... collected 17 items
 
-tests/test_posting.py::test_valid_message_validation PASSED              [  7%]
-tests/test_posting.py::test_validation_fails_when_message_exceeds_200_chars PASSED [ 15%]
-tests/test_posting.py::test_validation_fails_without_url PASSED          [ 23%]
-tests/test_posting.py::test_validation_fails_with_multiple_urls PASSED   [ 30%]
-tests/test_posting.py::test_validation_fails_with_empty_or_whitespace PASSED [ 38%]
-tests/test_posting.py::test_validation_fails_with_invalid_url_scheme PASSED [ 46%]
-tests/test_posting.py::test_validation_fails_with_malformed_url PASSED   [ 53%]
-tests/test_posting.py::test_api_root_endpoint PASSED                     [ 61%]
+tests/test_posting.py::test_valid_message_validation PASSED              [  5%]
+tests/test_posting.py::test_validation_fails_when_message_exceeds_200_chars PASSED [ 11%]
+tests/test_posting.py::test_validation_fails_without_url PASSED          [ 17%]
+tests/test_posting.py::test_validation_fails_with_multiple_urls PASSED   [ 23%]
+tests/test_posting.py::test_validation_fails_with_empty_or_whitespace PASSED [ 29%]
+tests/test_posting.py::test_validation_fails_with_invalid_url_scheme PASSED [ 35%]
+tests/test_posting.py::test_validation_fails_with_malformed_url PASSED   [ 41%]
+tests/test_posting.py::test_api_root_endpoint PASSED                     [ 47%]
+tests/test_posting.py::test_api_platforms_endpoint PASSED                [ 52%]
+tests/test_posting.py::test_api_posting_validation_error_returned PASSED [ 58%]
+tests/test_posting.py::test_api_posting_mock_success_all_platforms PASSED [ 64%]
+tests/test_posting.py::test_api_posting_without_credentials_fails_gracefully PASSED [ 70%]
+tests/test_posting.py::test_independent_error_handling_isolation PASSED  [ 76%]
+tests/test_posting.py::test_api_posting_exactly_200_chars_accepted PASSED [ 82%]
+tests/test_posting.py::test_api_posting_exceeding_200_chars_rejected PASSED [ 88%]
+tests/test_posting.py::test_api_posting_multiple_urls_rejected PASSED    [ 94%]
+tests/test_posting.py::test_api_posting_malformed_url_rejected PASSED    [100%]
+
+============================== 17 passed in 0.15s ==============================
+```
 tests/test_posting.py::test_api_platforms_endpoint PASSED                [ 69%]
 tests/test_posting.py::test_api_posting_validation_error_returned PASSED [ 76%]
 tests/test_posting.py::test_api_posting_mock_success_all_platforms PASSED [ 84%]

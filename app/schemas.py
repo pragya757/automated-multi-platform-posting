@@ -74,8 +74,10 @@ class PlatformResult(BaseModel):
     date: Optional[str] = Field(None, description="Posting date (YYYY-MM-DD)")
     time: Optional[str] = Field(None, description="Posting time (HH:MM:SS)")
     error: Optional[str] = Field(None, description="Error details if posting failed")
+    is_mock: bool = Field(False, description="Whether this result was generated via test mock simulation rather than live publishing")
 
 
 class PostingResponse(BaseModel):
     success: bool = Field(..., description="Overall status indicating if posting succeeded across any platform")
+    mock_mode: bool = Field(False, description="Indicates whether this operation ran in mock simulation mode")
     results: List[PlatformResult] = Field(..., description="Individual platform posting results")

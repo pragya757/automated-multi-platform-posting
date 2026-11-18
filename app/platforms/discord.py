@@ -69,4 +69,7 @@ class DiscordPlatform(BasePlatform):
 
     async def post_mock(self, message: str, cta_url: str) -> PlatformResult:
         mock_id = 100000000000000000 + (uuid.uuid4().int % 900000000000000000)
-        return self.success_result(posted_url=f"https://discord.com/channels/123456789/987654321/mock-{mock_id}")
+        return self.success_result(
+            posted_url=f"https://discord.com/channels/123456789/987654321/mock-{mock_id}",
+            is_mock=True,
+        )

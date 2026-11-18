@@ -112,4 +112,7 @@ class BlueskyPlatform(BasePlatform):
     async def post_mock(self, message: str, cta_url: str) -> PlatformResult:
         handle = settings.BLUESKY_HANDLE or "demo-user.bsky.social"
         mock_rkey = uuid.uuid4().hex[:12]
-        return self.success_result(posted_url=f"https://bsky.app/profile/{handle}/post/mock-{mock_rkey}")
+        return self.success_result(
+            posted_url=f"https://bsky.app/profile/{handle}/post/mock-{mock_rkey}",
+            is_mock=True,
+        )

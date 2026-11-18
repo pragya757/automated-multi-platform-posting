@@ -119,4 +119,7 @@ class RedditPlatform(BasePlatform):
     async def post_mock(self, message: str, cta_url: str) -> PlatformResult:
         sub = settings.REDDIT_SUBREDDIT or "test"
         mock_id = uuid.uuid4().hex[:7]
-        return self.success_result(posted_url=f"https://www.reddit.com/r/{sub}/comments/mock-{mock_id}/")
+        return self.success_result(
+            posted_url=f"https://www.reddit.com/r/{sub}/comments/mock-{mock_id}/",
+            is_mock=True,
+        )
