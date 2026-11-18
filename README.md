@@ -4,6 +4,21 @@ A high-performance, asynchronous REST API service built with **FastAPI**, **Pyda
 
 ---
 
+## 🌐 Live Production Deployment
+
+The application is deployed live on **Vercel** serverless infrastructure:
+
+| Resource | URL |
+| :--- | :--- |
+| **Live Production Base URL** | [https://automated-multi-platform-posting-six.vercel.app](https://automated-multi-platform-posting-six.vercel.app) |
+| **Interactive API Documentation (Swagger UI)** | [https://automated-multi-platform-posting-six.vercel.app/docs](https://automated-multi-platform-posting-six.vercel.app/docs) |
+| **ReDoc API Documentation** | [https://automated-multi-platform-posting-six.vercel.app/redoc](https://automated-multi-platform-posting-six.vercel.app/redoc) |
+| **OpenAPI 3.1 Specification (JSON)** | [https://automated-multi-platform-posting-six.vercel.app/openapi.json](https://automated-multi-platform-posting-six.vercel.app/openapi.json) |
+| **Supported Platforms Status** | [https://automated-multi-platform-posting-six.vercel.app/platforms](https://automated-multi-platform-posting-six.vercel.app/platforms) |
+| **Public GitHub Repository** | [https://github.com/pragya757/automated-multi-platform-posting](https://github.com/pragya757/automated-multi-platform-posting) |
+
+---
+
 ## 1. Executive Summary & Platform Research
 
 To meet the requirement of publishing short messages ($\le 200$ characters containing exactly one Call-To-Action link) across multiple third-party platforms with **accessible, free/low-cost official developer APIs**, the following 5 platforms were evaluated, selected, and integrated:
@@ -185,6 +200,13 @@ Publishes a validated text message with one CTA URL across all platforms.
 {
   "message": "Check out our latest business platform and grow your online visibility. https://example.com"
 }
+```
+
+#### Production Test cURL Command
+```bash
+curl -X POST "https://automated-multi-platform-posting-six.vercel.app/posting?mock=true" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Check out our latest business platform and grow your online visibility. https://example.com"}'
 ```
 
 #### Sample Successful Response (200 OK - Mock Simulation Mode)
